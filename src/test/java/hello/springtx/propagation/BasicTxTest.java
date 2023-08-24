@@ -104,4 +104,20 @@ public class BasicTxTest {
         log.info("외부 트랜잭션 롤백");
         txManager.rollback(outer);
     }
+
+    @Test
+    void inner_rollback() {
+        log.info("외부 트랜잭션 시작");
+        TransactionStatus outer = txManager.getTransaction(new DefaultTransactionAttribute());
+
+        log.info("내부 트랜잭션 시작");
+        TransactionStatus inner = txManager.getTransaction(new DefaultTransactionAttribute());
+        log.info("내부 트랜잭션 롤백");
+        txManager.rollback(inner); // rollback-only 표시
+
+        log.info("외부 트랜잭션 커밋");
+//        assertThatThrownBy(() -> txManager.commit(outer))
+//                .isInstanceOf(UnexpectedRollbackException.class);
+        txManager.commit(outer); // UnexpectedRollbackException
+    }
 }
